@@ -44,8 +44,7 @@ Evaluate the model with the testing data.
 
 ## PROGRAM
 ### Name:Syed Muhammed Zahi
-### Register Number: 212222230114
-
+### Register Number:212222230114
 ```python
 import pandas as pd
 import tensorflow
@@ -120,6 +119,3 @@ marks_data.predict(X_n1_1)
 
 ## RESULT
 Thus the program executed successfully
-
-
-Include your result here
