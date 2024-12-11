@@ -45,60 +45,58 @@ Evaluate the model with the testing data.
 ## PROGRAM
 ### Name:Syed Muhammed Zahi
 ### Register Number:212222230114
-```python
-import pandas as pd
-import tensorflow
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler
-```
-```python
+~~~
 from google.colab import auth
 import gspread
 from google.auth import default
 import pandas as pd
 
-
 auth.authenticate_user()
 creds, _ = default()
 gc = gspread.authorize(creds)
+worksheet = gc.open('DL').sheet1
 
-ws = gc.open('demo').sheet1
-
-rows = ws.get_all_values()
-```
-```python
+rows = worksheet.get_all_values()
 df = pd.DataFrame(rows[1:], columns=rows[0])
-df = df.astype({'sno':'float'})
-df = df.astype({'marks':'float'})
+df=df.astype({'INPUT':'float'})
+df=df.astype({'OUTPUT':'float'})
 df.head()
 
-x = df[["sno"]].values
-y = df[["marks"]].values
-```
-```python
-x_train,x_test,y_train,y_test = train_test_split(x,y,test_size = 0.33,random_state = 33)
-scaler = MinMaxScaler()
-scaler.fit(x_train)
-x_train1 = scaler.transform(x_train)
-```
-```python
-marks_data = Sequential([Dense(6,activation='relu'),Dense(7,activation='relu'),Dense(1)])
-marks_data.compile(optimizer = 'rmsprop' , loss = 'mse')
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
 
-marks_data.fit(x_train1 , y_train,epochs = 500)
+X = df[['INPUT']].values
+y = df[['OUTPUT']].values
+X
 
-loss_df = pd.DataFrame(marks_data.history.history)
-loss_df.plot()
+X_train,X_test,y_train,y_test = train_test_split(X,y,test_size = 0.33,random_state = 33)
+Scaler = MinMaxScaler()
+Scaler.fit(X_train)
+X_train1 = Scaler.transform(X_train)
 
-x_test1 = scaler.transform(x_test)
-marks_data.evaluate(x_test1,y_test)
+model=Sequential([
+    #Hidden ReLU Layers
+    Dense(units=5,activation='relu',input_shape=[1]),
+    Dense(units=3,activation='relu'),
+    #Linear Output Layer
+    Dense(units=1)
+])
 
-X_n1 = [[30]]
-X_n1_1 = scaler.transform(X_n1)
-marks_data.predict(X_n1_1)
-```
+model.compile(optimizer='rmsprop',loss='mse')
+model.fit(X_train1,y_train,epochs=3000)
+
+loss= pd.DataFrame(model.history.history)
+loss.plot()
+
+X_test1 =Scaler.transform(X_test)
+model.evaluate(X_test1,y_test)
+
+X_n1=[[4]]
+X_n1_1=Scaler.transform(X_n1)
+model.predict(X_n1_1)
+~~~
 ## Dataset Information
 
 ![image](https://github.com/user-attachments/assets/ad9acfb8-200d-4a78-853a-529030f36801)
